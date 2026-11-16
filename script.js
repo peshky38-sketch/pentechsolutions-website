@@ -1,65 +1,227 @@
-const WHATSAPP_NUMBER = "254721351481";
-const EMAIL_ADDRESS = "pentechsolutions2011@gmail.com";
 
-function whatsappLink(message) {
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-}
+// ==========================================
+// PENTECH SOLUTIONS LIMITED
+// Website JavaScript
+// ==========================================
 
-document.getElementById("year").textContent = new Date().getFullYear();
+document.addEventListener("DOMContentLoaded", function () {
 
-const menuToggle = document.getElementById("menuToggle");
-const navLinks = document.getElementById("navLinks");
-menuToggle.addEventListener("click", () => {
-  const isOpen = navLinks.classList.toggle("open");
-  menuToggle.setAttribute("aria-expanded", String(isOpen));
-  menuToggle.textContent = isOpen ? "×" : "☰";
-});
-navLinks.querySelectorAll("a").forEach(link => {
-  link.addEventListener("click", () => {
-    navLinks.classList.remove("open");
-    menuToggle.setAttribute("aria-expanded", "false");
-    menuToggle.textContent = "☰";
-  });
-});
+    // 1. WHATSAPP BUSINESS NUMBER
+    const whatsappNumber = "254721351481";
 
-document.querySelectorAll(".product-inquire").forEach(link => {
-  link.href = whatsappLink(`Hello Pentech Solutions Limited, I would like to enquire about ${link.dataset.product}. Please share available options and prices.`);
-  link.target = "_blank";
-  link.rel = "noopener";
-});
-document.querySelectorAll(".repair-link").forEach(link => {
-  link.href = whatsappLink(`Hello Pentech Solutions Limited, I would like to enquire about ${link.dataset.service}. Please advise on the next steps.`);
-  link.target = "_blank";
-  link.rel = "noopener";
-});
 
-document.querySelectorAll(".filter-btn").forEach(button => {
-  button.addEventListener("click", () => {
-    document.querySelectorAll(".filter-btn").forEach(item => item.classList.remove("active"));
-    button.classList.add("active");
-    const filter = button.dataset.filter;
-    document.querySelectorAll(".product-card").forEach(card => {
-      card.classList.toggle("hidden", filter !== "all" && card.dataset.category !== filter);
+    // 2. WHATSAPP LINK GENERATOR
+    function createWhatsAppLink(message) {
+        return "https://wa.me/" + whatsappNumber +
+            "?text=" + encodeURIComponent(message);
+    }
+
+
+    // 3. AUTOMATIC COPYRIGHT YEAR
+    const yearElement = document.getElementById("year");
+
+    if (yearElement) {
+        yearElement.textContent = new Date().getFullYear();
+    }
+
+
+    // 4. MOBILE NAVIGATION MENU
+    const menuButton = document.getElementById("hamburger");
+    const navigation = document.getElementById("nav");
+
+    if (menuButton && navigation) {
+
+        menuButton.setAttribute("aria-expanded", "false");
+
+        menuButton.addEventListener("click", function () {
+
+            navigation.classList.toggle("open");
+
+            const menuIsOpen = navigation.classList.contains("open");
+
+            menuButton.textContent = menuIsOpen ? "×" : "☰";
+
+            menuButton.setAttribute(
+                "aria-expanded",
+                menuIsOpen ? "true" : "false"
+            );
+
+        });
+
+
+        // Close menu when a navigation link is clicked
+        const navigationLinks = navigation.querySelectorAll("a");
+
+        navigationLinks.forEach(function (link) {
+
+            link.addEventListener("click", function () {
+
+                navigation.classList.remove("open");
+
+                menuButton.textContent = "☰";
+
+                menuButton.setAttribute("aria-expanded", "false");
+
+            });
+
+        });
+
+    }
+
+
+    // 5. PRODUCT WHATSAPP ENQUIRIES
+    const productButtons = document.querySelectorAll(".product-wa");
+
+    productButtons.forEach(function (button) {
+
+        const productName = button.dataset.product || "your products";
+
+        const message =
+            "Hello Pentech Solutions Limited! " +
+            "I am interested in " + productName + ". " +
+            "Please share the available options, specifications and prices.";
+
+        button.href = createWhatsAppLink(message);
+
+        button.target = "_blank";
+
+        button.rel = "noopener noreferrer";
+
     });
-  });
-});
 
-document.getElementById("contactForm").addEventListener("submit", event => {
-  event.preventDefault();
-  const form = event.currentTarget;
-  if (!form.reportValidity()) return;
-  const data = new FormData(form);
-  const subject = `Website enquiry: ${data.get("subject")}`;
-  const body = [
-    `Name: ${data.get("name")}`,
-    `Phone: ${data.get("phone")}`,
-    `Email: ${data.get("email")}`,
-    `Enquiry: ${data.get("subject")}`,
-    "",
-    "Message:",
-    data.get("message")
-  ].join("\n");
-  const mailto = `mailto:${EMAIL_ADDRESS}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  document.getElementById("formNote").textContent = "Opening your email application with your enquiry...";
-  window.location.href = mailto;
+
+    // 6. SERVICE WHATSAPP ENQUIRIES
+    const serviceButtons = document.querySelectorAll(".service-link");
+
+    serviceButtons.forEach(function (button) {
+
+        const serviceName = button.dataset.service || "your services";
+
+        const message =
+            "Hello Pentech Solutions Limited! " +
+            "I would like to enquire about " + serviceName + ". " +
+            "Please share more information and your charges.";
+
+        button.href = createWhatsAppLink(message);
+
+        button.target = "_blank";
+
+        button.rel = "noopener noreferrer";
+
+    });
+
+
+    // 7. GENERAL WHATSAPP BUTTONS
+    const generalWhatsAppButtons = document.querySelectorAll(".whatsapp-link");
+
+    generalWhatsAppButtons.forEach(function (button) {
+
+        if (!button.href || button.getAttribute("href") === "#") {
+
+            button.href = createWhatsAppLink(
+                "Hello Pentech Solutions Limited! I would like to make an enquiry."
+            );
+
+        }
+
+        button.target = "_blank";
+
+        button.rel = "noopener noreferrer";
+
+    });
+
+
+    // 8. CONTACT FORM
+    const contactForm = document.getElementById("contactForm");
+
+    if (contactForm) {
+
+        contactForm.addEventListener("submit", function (event) {
+
+            event.preventDefault();
+
+            const name = document.getElementById("name")?.value.trim() || "";
+            const email = document.getElementById("email")?.value.trim() || "";
+            const phone = document.getElementById("phone")?.value.trim() || "";
+            const message = document.getElementById("message")?.value.trim() || "";
+
+            if (!name || !email || !message) {
+
+                alert("Please fill in your name, email and message.");
+
+                return;
+
+            }
+
+            const subject = encodeURIComponent(
+                "Website Enquiry from " + name
+            );
+
+            const body = encodeURIComponent(
+                "Hello Pentech Solutions Limited,\n\n" +
+                "Name: " + name + "\n" +
+                "Email: " + email + "\n" +
+                "Phone: " + phone + "\n\n" +
+                "Message:\n" + message
+            );
+
+            window.location.href =
+                "mailto:pentechsolutions2011@gmail.com" +
+                "?subject=" + subject +
+                "&body=" + body;
+
+        });
+
+    }
+
+
+    // 9. SMOOTH SCROLLING
+    document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+
+        link.addEventListener("click", function (event) {
+
+            const targetId = link.getAttribute("href");
+
+            if (!targetId || targetId === "#") {
+                return;
+            }
+
+            const targetElement = document.querySelector(targetId);
+
+            if (targetElement) {
+
+                event.preventDefault();
+
+                targetElement.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+            }
+
+        });
+
+    });
+
+
+    // 10. BACK TO TOP BUTTON
+    const backToTop = document.getElementById("backToTop");
+
+    if (backToTop) {
+
+        backToTop.addEventListener("click", function () {
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+
+        });
+
+    }
+
+
+    // 11. WEBSITE READY
+    console.log("Pentech Solutions website loaded successfully!");
+
 });
